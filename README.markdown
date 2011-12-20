@@ -29,3 +29,7 @@ License
 
 The code not related to external libraries is free for any kind of use.<br/>
 All the tested libraries and MBProgressHUD have their own license, please check it before you use one library in your project(s).
+
+Credits
+====================
+Thanks to [johnezang](https://github.com/johnezang) for adding extra parsing methods for JSONKit.
