@@ -403,7 +403,7 @@
     return [NSNumber numberWithFloat:elapsedTime];
 }
 
-- (NSNumber *)parseWithJSONKitDataThread:(NSData *)content
+- (NSNumber *)parseWithJSONKitThreadData:(NSData *)content
 {
     JSONDecoder *decoder = [[[NSThread currentThread] threadDictionary] objectForKey:@"JSONKit Thread Local Decoder"];
     if(decoder == NULL) {
