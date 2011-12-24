@@ -355,7 +355,7 @@
         SEL method = NSSelectorFromString([NSString stringWithFormat:@"parseWith%@:",libName]);
         
         for (int i = 0; i < self.repeats; i++) {
-            [results addObject:[self performSelector:method withObject:([libName hasPrefix:@"JSONKitData"] ? contentData : contentFile)]];
+            [results addObject:[self performSelector:method withObject:([libName hasSuffix:@"Data"] ? contentData : contentFile)]];
         }
        
         [_results setObject:results forKey:libName];
@@ -403,7 +403,7 @@
     return [NSNumber numberWithFloat:elapsedTime];
 }
 
-- (NSNumber *)parseWithJSONKitDataThread:(NSData *)content
+- (NSNumber *)parseWithJSONKitThreadData:(NSData *)content
 {
     JSONDecoder *decoder = [[[NSThread currentThread] threadDictionary] objectForKey:@"JSONKit Thread Local Decoder"];
     if(decoder == NULL) {
@@ -418,7 +418,7 @@
     return [NSNumber numberWithFloat:elapsedTime];
 }
 
-- (NSNumber *)parseWithSBJSON:(NSString *)content
+- (NSNumber *)parseWithSBJson:(NSString *)content
 {
     NSDate *startTime = [NSDate date];
     // Create SBJSON object to parse JSON
@@ -426,9 +426,22 @@
     id result = [parser objectWithString:content error:nil];
     float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
     if (result == nil)
-        elapsedTime = -1.0;;
+        elapsedTime = -1.0;
      return [NSNumber numberWithFloat:elapsedTime];;
 }
+
+- (NSNumber *)parseWithSBJsonData:(NSData *)content
+{
+    NSDate *startTime = [NSDate date];
+    // Create SBJSON object to parse JSON
+    SBJsonParser *parser = [[SBJsonParser alloc] init];
+    id result = [parser objectWithData:content];
+    float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
+    if (result == nil)
+        elapsedTime = -1.0;
+    return [NSNumber numberWithFloat:elapsedTime];;
+}
+
 
 - (NSNumber *)parseWithTouchJSON:(NSString *)content
 {

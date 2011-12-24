@@ -28,7 +28,8 @@
 
 - (void)parse;
 - (NSNumber *)parseWithJSONKit:(NSString *)content;
-- (NSNumber *)parseWithSBJSON:(NSString *)content;
+- (NSNumber *)parseWithSBJson:(NSString *)content;
+- (NSNumber *)parseWithSBJsonData:(NSData *)content;
 - (NSNumber *)parseWithTouchJSON:(NSString *)content;
 - (NSNumber *)parseWithNextiveJson:(NSString *)content;
 - (NSNumber *)parseWithNSJSONSerialization:(NSString *)content;
