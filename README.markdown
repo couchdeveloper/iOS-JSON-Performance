@@ -33,3 +33,4 @@ All the tested libraries and MBProgressHUD have their own license, please check 
 Credits
 ====================
 Thanks to [johnezang](https://github.com/johnezang) for adding extra parsing methods for JSONKit.
+Thanks to [stig](https://github.com/stig) for adding extra parsing methods for SBJson.
