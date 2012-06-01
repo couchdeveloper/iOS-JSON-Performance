@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <Group
+      location = "container:"
+      name = "Vendors">
+      <FileRef
+         location = "group:JSONlibs/JPJson/Libraries/iOS Libraries/JPJson iOS Libraries.xcodeproj">
+      </FileRef>
+   </Group>
+   <FileRef
+      location = "group:JSONlibs.xcodeproj">
+   </FileRef>
+</Workspace>

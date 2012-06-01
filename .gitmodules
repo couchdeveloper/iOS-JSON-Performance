@@ -1,0 +1,3 @@
+[submodule "JSONlibs/JPJson"]
+	path = JSONlibs/JPJson
+	url = git://github.com/couchdeveloper/JPJson.git

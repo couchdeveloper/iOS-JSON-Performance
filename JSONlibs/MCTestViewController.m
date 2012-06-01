@@ -11,6 +11,8 @@
 #import "SBJson.h"
 #import "CJSONDeserializer.h"
 #import "NXJsonParser.h"
+#import "JPJson/JPJsonParser.h"
+#import "JPJson/JPStreamSemanticActions.h"
 
 @implementation MCTestViewController
 
@@ -355,7 +357,14 @@
         SEL method = NSSelectorFromString([NSString stringWithFormat:@"parseWith%@:",libName]);
         
         for (int i = 0; i < self.repeats; i++) {
+            // Since the JSON representation may be an autoreleased object, we should collect  
+            // them in an extra pool and release them as soon as possible. Additionally,
+            // some of the JSON parsers seem not to care about creating a whole bunch of autoreleased 
+            // objects which may tie up a lot of memory. So we need to get rid of them here, too.
+            // Intrinsically, these additional allocations and deallocations should be meassured, too.
+            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
             [results addObject:[self performSelector:method withObject:([libName hasSuffix:@"Data"] ? contentData : contentFile)]];
+            [pool drain];
         }
        
         [_results setObject:results forKey:libName];
@@ -367,6 +376,8 @@
     [self setCompleted:YES];
 }
 
+
+#pragma mark - JSONKit
 - (NSNumber *)parseWithJSONKit:(NSString *)content
 {
     NSDate *startTime = [NSDate date];
@@ -418,16 +429,81 @@
     return [NSNumber numberWithFloat:elapsedTime];
 }
 
+#pragma mark - JPJson
+
+- (NSNumber *)parseWithJPJson:(NSString *)content
+{
+    NSDate *startTime = [NSDate date];
+    NSError* error;
+    id result = [JPJsonParser parseString:content options:(JPJsonParserOptions)0 error:&error];
+    float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
+    if (result == nil)
+        elapsedTime = -1.0;
+    return [NSNumber numberWithFloat:elapsedTime];
+}
+
+- (NSNumber *)parseWithJPJsonData:(NSData *)content
+{
+    NSDate *startTime = [NSDate date];
+    NSError* error;
+    id result = [JPJsonParser parseData:content options:(JPJsonParserOptions)0 error:&error];
+    float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
+    if (result == nil)
+        elapsedTime = -1.0;
+    return [NSNumber numberWithFloat:elapsedTime];
+}
+
+- (NSNumber *)parseWithJPJsonValidatorData:(NSData *)content
+{
+    NSDate *startTime = [NSDate date];
+    
+    // What we want to do here is to create a parser that just validates
+    // a JSON text - and this should be fast (a validating parser might be
+    // more than 4 times as fast than a parser which also needs to create
+    // the JSON repesentation as Foundation objects).
+    //
+    // We can accomplish this using a specialized semantic actions class.
+    // In fact, the base class JPStreamSemanticActions will almost do this.
+    // JPStreamSemanticActions provides a "stream API" which is just a
+    // set of empty methods which will be invoked by the inernal json
+    // parser on various events. Usually, JPStreamSemanticActions should be
+    // subclassed to do something useful. The methods provided in the base
+    // class JPStreamSemanticActions do (almost) nothing, and this is exactly
+    // what we want. We are soley interested in the parser saying: "success".
+    
+    // Since we do not use handler blocks here in this sample, we need to use the 
+    // following init method to explicitly specify NOT to use a disatch queue. 
+    JPStreamSemanticActions* sa = [[JPStreamSemanticActions alloc] initWithHandlerDispatchQueue:NULL];
+    
+    // Once we created the semantic actions object we may now set various
+    // options available for this semantic actions object and which may also
+    // affect the parser:
+    sa.parseMultipleDocuments = NO;  // this is the default anyway, but just as an example
+    sa.logLevel = JPSemanticActionsLogLevelDebug; // log verbose
+    
+    
+    // Now pass the semantic actions object to the parse method:
+    BOOL success = [JPJsonParser parseData:content semanticActions:sa];    
+    float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
+    if (!success)
+        elapsedTime = -1.0;
+    return [NSNumber numberWithFloat:elapsedTime];
+}
+
+
+#pragma mark - SBJson
+
 - (NSNumber *)parseWithSBJson:(NSString *)content
 {
     NSDate *startTime = [NSDate date];
     // Create SBJSON object to parse JSON
     SBJsonParser *parser = [[SBJsonParser alloc] init];
     id result = [parser objectWithString:content error:nil];
+    [parser release];
     float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
     if (result == nil)
         elapsedTime = -1.0;
-     return [NSNumber numberWithFloat:elapsedTime];;
+    return [NSNumber numberWithFloat:elapsedTime];;
 }
 
 - (NSNumber *)parseWithSBJsonData:(NSData *)content
@@ -436,12 +512,14 @@
     // Create SBJSON object to parse JSON
     SBJsonParser *parser = [[SBJsonParser alloc] init];
     id result = [parser objectWithData:content];
+    [parser release];
     float elapsedTime = [startTime timeIntervalSinceNow] * -1000;
     if (result == nil)
         elapsedTime = -1.0;
     return [NSNumber numberWithFloat:elapsedTime];;
 }
 
+#pragma mark - TouchJson
 
 - (NSNumber *)parseWithTouchJSON:(NSString *)content
 {
@@ -455,6 +533,8 @@
      return [NSNumber numberWithFloat:elapsedTime];;
 }
 
+#pragma mark - NextiveJson
+
 - (NSNumber *)parseWithNextiveJson:(NSString *)content
 {
     NSError *error = nil;
@@ -466,6 +546,7 @@
      return [NSNumber numberWithFloat:elapsedTime];;
 }
 
+#pragma mark - NSJSONSerialization
 - (NSNumber *)parseWithNSJSONSerialization:(NSString *)content
 {
     NSError *error = nil;

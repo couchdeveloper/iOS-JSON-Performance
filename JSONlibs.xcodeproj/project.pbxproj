@@ -51,6 +51,7 @@
 		5BA8E521148E62DB00808B76 /* MCTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA8E51F148E62DB00808B76 /* MCTestViewController.m */; };
 		5BA8E522148E62DB00808B76 /* MCTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5BA8E520148E62DB00808B76 /* MCTestViewController.xib */; };
 		5BA8E52E148ED03B00808B76 /* repeat.json in Resources */ = {isa = PBXBuildFile; fileRef = 5BA8E52D148ED03B00808B76 /* repeat.json */; };
+		A1D583BA1578DE5C008B5EFC /* libjson-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D583B91578DE5C008B5EFC /* libjson-iOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -135,6 +136,7 @@
 		5BA8E51F148E62DB00808B76 /* MCTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MCTestViewController.m; sourceTree = "<group>"; };
 		5BA8E520148E62DB00808B76 /* MCTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MCTestViewController.xib; sourceTree = "<group>"; };
 		5BA8E52D148ED03B00808B76 /* repeat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = repeat.json; sourceTree = "<group>"; };
+		A1D583B91578DE5C008B5EFC /* libjson-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libjson-iOS.a"; path = "Build/Products/Release-iphoneos/libjson-iOS.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1D583BA1578DE5C008B5EFC /* libjson-iOS.a in Frameworks */,
 				5B528453148E52F500685137 /* UIKit.framework in Frameworks */,
 				5B528455148E52F500685137 /* Foundation.framework in Frameworks */,
 				5B528457148E52F500685137 /* CoreGraphics.framework in Frameworks */,
@@ -154,6 +157,7 @@
 		5B528443148E52F500685137 = {
 			isa = PBXGroup;
 			children = (
+				A1D583B91578DE5C008B5EFC /* libjson-iOS.a */,
 				5B528458148E52F500685137 /* JSONlibs */,
 				5B528451148E52F500685137 /* Frameworks */,
 				5B52844F148E52F500685137 /* Products */,
@@ -523,7 +527,16 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JSONlibs/JSONlibs-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)\"";
 				INFOPLIST_FILE = "JSONlibs/JSONlibs-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Build/Products/Release-iphoneos\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lstdc++",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -535,7 +548,16 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JSONlibs/JSONlibs-Prefix.pch";
+				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)\"";
 				INFOPLIST_FILE = "JSONlibs/JSONlibs-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Build/Products/Release-iphoneos\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lstdc++",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
